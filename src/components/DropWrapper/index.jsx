@@ -1,14 +1,14 @@
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
-import { GRID } from "../../constance";
+import { Color, GRID } from "../../constance";
 import { getStyle } from "../../util";
 
 const style = (isDraggingOverError, isDraggingOver) => ({
   background: isDraggingOverError
-    ? "#ffcccc"
+    ? Color.dropRed
     : isDraggingOver
-      ? "#ADD8E6"
-      : "#cbe8f0",
+      ? Color.dropOverBlue
+      : Color.dropBoxBlue,
   padding: GRID,
   width: 250,
   height: 500,

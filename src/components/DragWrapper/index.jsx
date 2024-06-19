@@ -1,5 +1,5 @@
 import React from "react";
-import { GRID } from "../../constance";
+import { Color, GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
 import { getStyle } from "../../util";
 import NumberBox from "../NumberBox";
@@ -10,12 +10,12 @@ const style = (isDraggingError, isDragging, isSelected, draggableStyle) => ({
   margin: `0 0 ${GRID}px 0`,
   opacity: isSelected ? "0.4" : undefined,
   background: isDraggingError
-    ? "#ffe6e6"
+    ? Color.dragRed
     : isDragging
-      ? "#d1e7fd"
+      ? Color.dragIngBlue
       : isSelected
-        ? "#90EE90"
-        : "#ffffff",
+        ? Color.selectGreen
+        : Color.white,
   borderRadius: "15px",
   cursor: isDraggingError ? "not-allowed" : "pointer",
   ...draggableStyle,

@@ -1,11 +1,12 @@
 import React from "react";
 import { getStyle } from "../../util";
+import { Color } from "../../constance";
 const style = (isError) => ({
   position: "absolute",
   top: "-10px",
   right: "-10px",
-  backgroundColor: isError ? "#ff9999" : "#4d8ffb",
-  color: "#ffffff",
+  backgroundColor: isError ? Color.errorRed : Color.numberBlue,
+  color: Color.white,
   padding: "5px",
   width: "24px",
   height: "24px",
