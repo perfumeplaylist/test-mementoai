@@ -2,12 +2,14 @@ import React from "react";
 import { GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
 import { getStyleType } from "../../util";
+import NumberBox from "../NumberBox";
 
 const DragWrapper = ({
   item: { id, content },
   index,
   dropId,
   isSelected,
+  selectedItem,
   onClick,
 }) => {
   const style = (isDragging, draggableStyle) => ({
@@ -32,6 +34,7 @@ const DragWrapper = ({
           onClick={() => onClick({ id, content }, dropId)}
         >
           {content}
+          {snapshot.isDragging && <NumberBox count={selectedItem.length} />}
         </div>
       )}
     </Draggable>

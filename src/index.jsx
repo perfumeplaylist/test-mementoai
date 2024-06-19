@@ -111,6 +111,7 @@ const App = () => {
               isSelected={Boolean(
                 selectedItem.items.some(({ id: itemId }) => itemId === item.id)
               )}
+              selectedItem={selectedItem.items}
               onClick={toggleSelectedItem}
             />
           ))}
