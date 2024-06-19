@@ -1,4 +1,5 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./src/render.js",
@@ -27,4 +28,10 @@ module.exports = {
     port: 9000,
     hot: true,
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      template: path.join(__dirname, "public", "index.html"),
+    }),
+  ],
 };
