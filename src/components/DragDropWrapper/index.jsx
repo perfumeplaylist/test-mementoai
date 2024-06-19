@@ -1,6 +1,6 @@
 import React from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import { getStyleType } from "../../util";
+import { getStyle } from "../../util";
 
 const style = {
   display: "flex",
@@ -13,7 +13,7 @@ const style = {
 const DragDropWrapper = ({ onDragEnd, onDragUpdate, children }) => {
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
-      <div style={getStyleType(style)}>{children}</div>
+      <div style={getStyle(style)}>{children}</div>
     </DragDropContext>
   );
 };

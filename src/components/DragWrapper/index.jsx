@@ -1,7 +1,7 @@
 import React from "react";
 import { GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
-import { getStyleType } from "../../util";
+import { getStyle } from "../../util";
 import NumberBox from "../NumberBox";
 import ErrorMessage from "../ErrorMessage";
 
@@ -39,7 +39,7 @@ const DragWrapper = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={getStyleType(
+          style={getStyle(
             style(
               snapshot.isDragging && isError,
               snapshot.isDragging,

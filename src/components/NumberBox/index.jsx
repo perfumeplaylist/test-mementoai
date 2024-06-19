@@ -1,6 +1,5 @@
 import React from "react";
-import { getStyleType } from "../../util";
-
+import { getStyle } from "../../util";
 const style = (isError) => ({
   position: "absolute",
   top: "-10px",
@@ -19,7 +18,7 @@ const style = (isError) => ({
 });
 
 const NumberBox = ({ count, isError }) => {
-  return <div style={getStyleType(style(isError))}>{count}</div>;
+  return <div style={getStyle(style(isError))}>{count}</div>;
 };
 
 export default NumberBox;

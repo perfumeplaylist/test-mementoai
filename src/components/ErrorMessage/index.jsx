@@ -1,4 +1,5 @@
 import React from "react";
+import { getStyle } from "../../util";
 
 const style = () => ({
   position: "absolute",
@@ -15,7 +16,7 @@ const style = () => ({
 });
 
 const ErrorMessage = ({ children }) => {
-  return <span style={getStyleType(style)}>{children}</span>;
+  return <span style={getStyle(style())}>{children}</span>;
 };
 
 export default ErrorMessage;

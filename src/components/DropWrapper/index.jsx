@@ -1,7 +1,7 @@
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { GRID } from "../../constance";
-import { getStyleType } from "../../util";
+import { getStyle } from "../../util";
 
 const style = (isDraggingOverError, isDraggingOver) => ({
   background: isDraggingOverError
@@ -23,7 +23,7 @@ const DropWrapper = ({ id, children, isError }) => {
         <div
           {...provided.droppableProps}
           ref={provided.innerRef}
-          style={getStyleType(
+          style={getStyle(
             style(snapshot.isDraggingOver && isError, snapshot.isDraggingOver)
           )}
         >
