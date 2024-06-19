@@ -1,5 +1,4 @@
 import React from "react";
-import NumberBox from "../NumberBox";
 import { GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
 import { getStyleType } from "../../util";
@@ -14,7 +13,7 @@ const DragWrapper = ({ item: { id, content }, index, dropId }) => {
   });
 
   return (
-    <Draggable draggableId={dropId} index={index}>
+    <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
