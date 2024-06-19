@@ -15,13 +15,7 @@ const App = () => {
   const [lines, setLines] = useState(initalState);
 
   const swap = (destination, source) => {
-    const prevLine = [...lines[source.droppableId]];
-    const nextLine = [...lines[destination.droppableId]];
-
-    const [removed] = prevLine.splice(source.index, 1);
-    if (source.droppableId === destination.droppableId)
-      nextLine.splice(source.index, 1);
-    nextLine.splice(destination.index, 0, removed);
+    const { prevLine, nextLine } = reorder(lines, source, destination);
 
     setLines((prevLineItem) => ({
       ...prevLineItem,
