@@ -3,6 +3,23 @@ import { GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
 import { getStyleType } from "../../util";
 import NumberBox from "../NumberBox";
+import ErrorMessage from "../ErrorMessage";
+
+const style = (isDraggingError, isDragging, isSelected, draggableStyle) => ({
+  padding: GRID * 2,
+  margin: `0 0 ${GRID}px 0`,
+  opacity: isSelected ? "0.4" : undefined,
+  background: isDraggingError
+    ? "#ffe6e6"
+    : isDragging
+      ? "#d1e7fd"
+      : isSelected
+        ? "#90EE90"
+        : "#ffffff",
+  borderRadius: "15px",
+  cursor: isDraggingError ? "not-allowed" : "pointer",
+  ...draggableStyle,
+});
 
 const DragWrapper = ({
   item: { id, content },
@@ -10,16 +27,10 @@ const DragWrapper = ({
   dropId,
   isSelected,
   selectedItem,
+  errorMessage,
   onClick,
 }) => {
-  const style = (isDragging, draggableStyle) => ({
-    padding: GRID * 2,
-    margin: `0 0 ${GRID}px 0`,
-    opacity: isSelected ? "0.4" : undefined,
-    background: isDragging ? "#d1e7fd" : isSelected ? "#90EE90" : "#ffffff",
-    borderRadius: "15px",
-    ...draggableStyle,
-  });
+  const isError = errorMessage.length > 1;
 
   return (
     <Draggable draggableId={id} index={index}>
@@ -29,12 +40,22 @@ const DragWrapper = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={getStyleType(
-            style(snapshot.isDragging, provided.draggableProps.style)
+            style(
+              snapshot.isDragging && isError,
+              snapshot.isDragging,
+              isSelected,
+              provided.draggableProps.style
+            )
           )}
           onClick={() => onClick({ id, content }, dropId)}
         >
           {content}
-          {snapshot.isDragging && <NumberBox count={selectedItem.length} />}
+          {snapshot.isDragging && (
+            <>
+              <NumberBox count={selectedItem.length} isError={isError} />
+              {isError && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            </>
+          )}
         </div>
       )}
     </Draggable>
