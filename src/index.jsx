@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import DragDropWrapper from "./components/DragDropWrapper/index";
-import DropWrapper from "./components/DropWrapper/index";
-import DragWrapper from "./components/DragWrapper/index";
-import { data, localStorage } from "./util";
+import React, { useState } from "react";
+import DragDropWrapper from "./components/DragDropWrapper";
+import DropWrapper from "./components/DropWrapper";
+import DragWrapper from "./components/DragWrapper";
+import { data } from "./util";
+import { LOCALDNDKEY } from "./constance";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 const isOddDropId = (source, destination) => {
   return (
@@ -11,7 +13,13 @@ const isOddDropId = (source, destination) => {
   );
 };
 
-const isEvenDrop = (source, destination, selectedItem, lines, isMultiItem) => {
+const isEvenDrop = (
+  source,
+  destination,
+  selectedItem,
+  localStorage,
+  isMultiItem
+) => {
   if (
     source.droppableId === destination.droppableId &&
     source.index === destination.index
@@ -19,7 +27,7 @@ const isEvenDrop = (source, destination, selectedItem, lines, isMultiItem) => {
     return false;
   }
   const itemId = parseInt(
-    lines[source.droppableId][source.index].id.match(/\d+/)[0],
+    localStorage[source.droppableId][source.index].id.match(/\d+/)[0],
     10
   );
 
@@ -39,7 +47,7 @@ const isEvenDrop = (source, destination, selectedItem, lines, isMultiItem) => {
       : 0);
 
   if (selectedEven.length) {
-    const targetInfo = lines[destination.droppableId][destIdx];
+    const targetInfo = localStorage[destination.droppableId][destIdx];
 
     const isTargetEven = targetInfo
       ? targetInfo.id.match(/\d+/) % 2 === 0
@@ -51,7 +59,7 @@ const isEvenDrop = (source, destination, selectedItem, lines, isMultiItem) => {
 };
 
 const App = () => {
-  const [lines, setLines] = useState(localStorage.get("dnd"));
+  const [localStorage, setLocalStorage] = useLocalStorage(LOCALDNDKEY);
   const [errorMessage, setError] = useState("");
   const [selectedItem, setSelectedItem] = useState({
     items: [],
@@ -62,21 +70,21 @@ const App = () => {
     const isDifferentLine =
       destination.droppableId === selectedItem.droppableId;
     if (!isDifferentLine) {
-      const prevLineItem = [...lines[destination.droppableId]];
+      const prevLineItem = [...localStorage[destination.droppableId]];
 
       prevLineItem.splice(destination.index, 0, ...selectedItem.items);
 
-      const updateLineItem = [...lines[source.droppableId]].filter(
+      const updateLineItem = [...localStorage[source.droppableId]].filter(
         (item) => !selectedItem.items.some(({ id }) => id === item.id)
       );
 
-      setLines((prev) => ({
+      setLocalStorage((prev) => ({
         ...prev,
         [source.droppableId]: updateLineItem,
         [destination.droppableId]: prevLineItem,
       }));
     } else {
-      const prevLineItem = [...lines[source.droppableId]];
+      const prevLineItem = [...localStorage[source.droppableId]];
 
       const prevItem = prevLineItem
         .slice(
@@ -93,7 +101,7 @@ const App = () => {
         selectedItem.items.some(({ id }) => id === item.id)
       );
 
-      setLines((prev) => ({
+      setLocalStorage((prev) => ({
         ...prev,
         [source.droppableId]: [...prevItem, ...itemsToMove, ...nextItem],
       }));
@@ -102,9 +110,13 @@ const App = () => {
   };
 
   const swap = (destination, source) => {
-    const { prevLine, nextLine } = data.reorder(lines, source, destination);
+    const { prevLine, nextLine } = data.reorder(
+      localStorage,
+      source,
+      destination
+    );
 
-    setLines((prevLineItem) => ({
+    setLocalStorage((prevLineItem) => ({
       ...prevLineItem,
       [source.droppableId]: prevLine,
       [destination.droppableId]: nextLine,
@@ -134,7 +146,7 @@ const App = () => {
         "첫 번째 칼럼에서 세 번째 칼럼으로는 아이템 이동이 불가능해야 합니다."
       );
     } else if (
-      isEvenDrop(source, destination, selectedItem, lines, isMultiItem)
+      isEvenDrop(source, destination, selectedItem, localStorage, isMultiItem)
     ) {
       setError("짝수 아이템은 다른 짝수 아이템 앞으로 이동할 수 없습니다.");
     } else {
@@ -160,18 +172,14 @@ const App = () => {
     });
   };
 
-  useEffect(() => {
-    localStorage.set("dnd", { ...lines });
-  }, [lines]);
-
   return (
     <DragDropWrapper onDragEnd={handleDragEnd} onDragUpdate={handleDragUpdate}>
-      {Object.keys(lines).map((id) => (
+      {Object.keys(localStorage).map((id) => (
         <DropWrapper key={id} id={id} isError={errorMessage.length > 1}>
           <h1>
-            {id} {lines[id].length}
+            {id} {localStorage[id].length}
           </h1>
-          {lines[id].map((item, index) => (
+          {localStorage[id].map((item, index) => (
             <DragWrapper
               key={item.id}
               item={item}

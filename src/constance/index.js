@@ -10,3 +10,4 @@ export const Color = {
   white: "#ffffff",
   numberBlue: "#4d8ffb",
 };
+export const LOCALDNDKEY = "dnd";
