@@ -16,6 +16,10 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      {
+        test: /.css$/,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   resolve: {
@@ -25,7 +29,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "public"),
     },
-    port: 9000,
+    port: 4000,
     hot: true,
   },
   plugins: [
