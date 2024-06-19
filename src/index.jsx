@@ -1,15 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DragDropWrapper from "./components/DragDropWrapper/index";
 import DropWrapper from "./components/DropWrapper/index";
 import DragWrapper from "./components/DragWrapper/index";
-import { getItems, reorder } from "./util";
-
-const initalState = {
-  line1: getItems(5),
-  line2: getItems(4),
-  line3: getItems(6),
-  line4: getItems(7),
-};
+import { data, localStorage } from "./util";
 
 const isOddDropId = (source, destination) => {
   return (
@@ -58,7 +51,7 @@ const isEvenDrop = (source, destination, selectedItem, lines, isMultiItem) => {
 };
 
 const App = () => {
-  const [lines, setLines] = useState(initalState);
+  const [lines, setLines] = useState(localStorage.get("dnd"));
   const [errorMessage, setError] = useState("");
   const [selectedItem, setSelectedItem] = useState({
     items: [],
@@ -109,7 +102,7 @@ const App = () => {
   };
 
   const swap = (destination, source) => {
-    const { prevLine, nextLine } = reorder(lines, source, destination);
+    const { prevLine, nextLine } = data.reorder(lines, source, destination);
 
     setLines((prevLineItem) => ({
       ...prevLineItem,
@@ -128,6 +121,7 @@ const App = () => {
       alert(`${errorMessage}`);
       return;
     }
+
     isMultiItem ? swapMulti(destination, source) : swap(destination, source);
   };
 
@@ -165,6 +159,10 @@ const App = () => {
       };
     });
   };
+
+  useEffect(() => {
+    localStorage.set("dnd", { ...lines });
+  }, [lines]);
 
   return (
     <DragDropWrapper onDragEnd={handleDragEnd} onDragUpdate={handleDragUpdate}>
