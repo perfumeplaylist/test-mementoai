@@ -13,6 +13,53 @@ const initalState = {
 
 const App = () => {
   const [lines, setLines] = useState(initalState);
+  const [selectedItem, setSelectedItem] = useState({
+    items: [],
+    droppableId: null,
+  });
+
+  const swapMulti = (destination, source) => {
+    const isDifferentLine =
+      destination.droppableId === selectedItem.droppableId;
+    if (!isDifferentLine) {
+      const prevLineItem = [...lines[destination.droppableId]];
+
+      prevLineItem.splice(destination.index, 0, ...selectedItem.items);
+
+      const updateLineItem = [...lines[source.droppableId]].filter(
+        (item) => !selectedItem.items.some(({ id }) => id === item.id)
+      );
+
+      setLines((prev) => ({
+        ...prev,
+        [source.droppableId]: updateLineItem,
+        [destination.droppableId]: prevLineItem,
+      }));
+    } else {
+      const prevLineItem = [...lines[source.droppableId]];
+
+      const prevItem = prevLineItem
+        .slice(
+          0,
+          destination.index + (source.index < destination.index ? 1 : 0)
+        )
+        .filter((item) => !selectedItem.items.some(({ id }) => id === item.id));
+
+      const nextItem = prevLineItem
+        .slice(destination.index + (source.index < destination.index ? 1 : 0))
+        .filter((item) => !selectedItem.items.some(({ id }) => id === item.id));
+
+      const itemsToMove = prevLineItem.filter((item) =>
+        selectedItem.items.some(({ id }) => id === item.id)
+      );
+
+      setLines((prev) => ({
+        ...prev,
+        [source.droppableId]: [...prevItem, ...itemsToMove, ...nextItem],
+      }));
+    }
+    setSelectedItem({ ...selectedItem, items: [] });
+  };
 
   const swap = (destination, source) => {
     const { prevLine, nextLine } = reorder(lines, source, destination);
@@ -25,9 +72,27 @@ const App = () => {
   };
 
   const handleDragEnd = ({ source, destination }) => {
+    const isMultiItem = selectedItem.items.length > 1;
     if (!destination) return;
 
-    swap(destination, source);
+    isMultiItem ? swapMulti(destination, source) : swap(destination, source);
+  };
+
+  const toggleSelectedItem = (item, droppableId) => {
+    setSelectedItem((prevSelectedItem) => {
+      const isChange = droppableId !== prevSelectedItem.droppableId;
+
+      const newItems = prevSelectedItem.items.some(
+        ({ id: ItemId }) => ItemId === item.id
+      )
+        ? prevSelectedItem.items.filter(({ id: ItemId }) => ItemId !== item.id)
+        : [...prevSelectedItem.items, item];
+
+      return {
+        droppableId,
+        items: isChange ? [item] : newItems,
+      };
+    });
   };
 
   return (
@@ -38,7 +103,16 @@ const App = () => {
             {id} {lines[id].length}
           </h1>
           {lines[id].map((item, index) => (
-            <DragWrapper key={item.id} item={item} index={index} dropId={id} />
+            <DragWrapper
+              key={item.id}
+              item={item}
+              index={index}
+              dropId={id}
+              isSelected={Boolean(
+                selectedItem.items.some(({ id: itemId }) => itemId === item.id)
+              )}
+              onClick={toggleSelectedItem}
+            />
           ))}
         </DropWrapper>
       ))}
