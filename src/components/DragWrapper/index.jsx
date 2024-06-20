@@ -27,10 +27,9 @@ const DragWrapper = ({
   dropId,
   selectInfo,
   errorMessage,
+  isError,
   onClick,
 }) => {
-  const isError = errorMessage.length > 1;
-
   return (
     <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => (
