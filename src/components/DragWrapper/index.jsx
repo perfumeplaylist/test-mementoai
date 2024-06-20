@@ -25,8 +25,7 @@ const DragWrapper = ({
   item: { id, content },
   index,
   dropId,
-  isSelected,
-  selectedItem,
+  selectInfo,
   errorMessage,
   onClick,
 }) => {
@@ -43,7 +42,7 @@ const DragWrapper = ({
             style(
               snapshot.isDragging && isError,
               snapshot.isDragging,
-              isSelected,
+              selectInfo.isSelected(id),
               provided.draggableProps.style
             )
           )}
@@ -52,7 +51,7 @@ const DragWrapper = ({
           {content}
           {snapshot.isDragging && (
             <>
-              <NumberBox count={selectedItem.length} isError={isError} />
+              <NumberBox count={selectInfo.count} isError={isError} />
               {isError && <ErrorMessage>{errorMessage}</ErrorMessage>}
             </>
           )}

@@ -5,6 +5,7 @@ import DragWrapper from "./components/DragWrapper";
 import { data } from "./util";
 import { LOCALDNDKEY } from "./constance";
 import useLocalStorage from "./hooks/useLocalStorage";
+import useSelect from "./hooks/useSelect";
 
 const isOddDropId = (source, destination) => {
   return (
@@ -60,11 +61,9 @@ const isEvenDrop = (
 
 const App = () => {
   const [localStorage, setLocalStorage] = useLocalStorage(LOCALDNDKEY);
+  const { selectedItem, setSelectedItem, selectInfo, toggleSelectedItem } =
+    useSelect();
   const [errorMessage, setError] = useState("");
-  const [selectedItem, setSelectedItem] = useState({
-    items: [],
-    droppableId: null,
-  });
 
   const swapMulti = (destination, source) => {
     const isDifferentLine =
@@ -75,7 +74,7 @@ const App = () => {
       prevLineItem.splice(destination.index, 0, ...selectedItem.items);
 
       const updateLineItem = [...localStorage[source.droppableId]].filter(
-        (item) => !selectedItem.items.some(({ id }) => id === item.id)
+        (item) => !selectInfo.isSelected(item.id)
       );
 
       setLocalStorage((prev) => ({
@@ -91,14 +90,14 @@ const App = () => {
           0,
           destination.index + (source.index < destination.index ? 1 : 0)
         )
-        .filter((item) => !selectedItem.items.some(({ id }) => id === item.id));
+        .filter((item) => !selectInfo.isSelected(item.id));
 
       const nextItem = prevLineItem
         .slice(destination.index + (source.index < destination.index ? 1 : 0))
-        .filter((item) => !selectedItem.items.some(({ id }) => id === item.id));
+        .filter((item) => !selectInfo.isSelected(item.id));
 
       const itemsToMove = prevLineItem.filter((item) =>
-        selectedItem.items.some(({ id }) => id === item.id)
+        selectInfo.isSelected(item.id)
       );
 
       setLocalStorage((prev) => ({
@@ -155,23 +154,6 @@ const App = () => {
     return;
   };
 
-  const toggleSelectedItem = (item, droppableId) => {
-    setSelectedItem((prevSelectedItem) => {
-      const isChange = droppableId !== prevSelectedItem.droppableId;
-
-      const newItems = prevSelectedItem.items.some(
-        ({ id: ItemId }) => ItemId === item.id
-      )
-        ? prevSelectedItem.items.filter(({ id: ItemId }) => ItemId !== item.id)
-        : [...prevSelectedItem.items, item];
-
-      return {
-        droppableId,
-        items: isChange ? [item] : newItems,
-      };
-    });
-  };
-
   return (
     <DragDropWrapper onDragEnd={handleDragEnd} onDragUpdate={handleDragUpdate}>
       {Object.keys(localStorage).map((id) => (
@@ -185,11 +167,8 @@ const App = () => {
               item={item}
               index={index}
               dropId={id}
-              isSelected={Boolean(
-                selectedItem.items.some(({ id: itemId }) => itemId === item.id)
-              )}
               errorMessage={errorMessage}
-              selectedItem={selectedItem.items}
+              selectInfo={selectInfo}
               onClick={toggleSelectedItem}
             />
           ))}
