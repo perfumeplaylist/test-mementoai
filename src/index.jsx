@@ -1,12 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { data } from "./util";
 import { LOCALDNDKEY } from "./constance";
-import DragDropWrapper from "./components/DragDropWrapper";
-import DropWrapper from "./components/DropWrapper";
-import DragWrapper from "./components/DragWrapper";
-import useLocalStorage from "./hooks/useLocalStorage";
-import useSelect from "./hooks/useSelect";
-import useErrorMessage from "./hooks/useErrorMessage";
+import { useLocalStorage, useSelect, useErrorMessage } from "./hooks";
+import { DragDropWrapper, DropWrapper, DragWrapper } from "./components";
 
 const App = () => {
   const [localStorage, setLocalStorage] = useLocalStorage(LOCALDNDKEY);
@@ -75,26 +71,27 @@ const App = () => {
     }));
   };
 
-  const handleDragEnd = ({ source, destination }) => {
-    const isMultiItem = selectInfo.count > 1;
+  const handleDragEnd = useCallback(
+    ({ source, destination }) => {
+      const isMultiItem = selectInfo.count > 1;
 
-    if (!destination) return;
+      if (!destination) return;
 
-    if (isError) {
-      alert(`${errorMessage}`);
-      return;
-    }
+      if (isError) {
+        alert(`${errorMessage}`);
+        return;
+      }
 
-    isMultiItem ? swapMulti(destination, source) : swap(destination, source);
-  };
+      isMultiItem ? swapMulti(destination, source) : swap(destination, source);
+    },
+    [selectInfo, isError]
+  );
 
   return (
     <DragDropWrapper onDragEnd={handleDragEnd} onDragUpdate={handleDragUpdate}>
       {Object.keys(localStorage).map((id) => (
         <DropWrapper key={id} id={id} isError={isError}>
-          <h1>
-            {id} {localStorage[id].length}
-          </h1>
+          <h2>남아있는 아이템:{localStorage[id].length}</h2>
           {localStorage[id].map((item, index) => (
             <DragWrapper
               key={item.id}

@@ -2,8 +2,7 @@ import React from "react";
 import { Color, GRID } from "../../constance";
 import { Draggable } from "react-beautiful-dnd";
 import { getStyle } from "../../util";
-import NumberBox from "../NumberBox";
-import ErrorMessage from "../ErrorMessage";
+import { NumberBox, ErrorMessage } from "../index";
 
 const style = (isDraggingError, isDragging, isSelected, draggableStyle) => ({
   padding: GRID * 2,
